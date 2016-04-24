@@ -1,7 +1,7 @@
 'use strict';
 
 import PIXI from 'pixi.js';
-import Noise from 'noisejs';
+let Noise = require('noisejs');
 import Hex from './Hex';
 import Grid from './Grid';
 import { ORIENTATION_POINTY } from './Coordinates/Orientation';
@@ -11,13 +11,11 @@ export default class HexGrid extends PIXI.Container {
     constructor() {
         super();
         this.draw();
-
-        console.log(Noise);
-
-        this.noiseGenerator = new Noise.Noise(Math.random());
     }
 
     draw() {
+        let noiseGenerator = new Noise.Noise(Math.random())
+
         // layout
         let layout = new Layout(
             ORIENTATION_POINTY,
@@ -32,7 +30,7 @@ export default class HexGrid extends PIXI.Container {
         let rectangle = grid.rectangle();
         for (let axial of rectangle) {
             let point = axial.toPixel(layout);
-            let perlin = this.noiseGenerator.perlin2(axial.q, axial.r);
+            let perlin = noiseGenerator.perlin2(point.x / 100, point.y / 100);
             let color = this.perlinToHeightColor(perlin);
             let hex = new Hex(layout, point, color);
             // this.addChild(this.debug(hex, axial));
@@ -80,7 +78,8 @@ export default class HexGrid extends PIXI.Container {
 
     perlinToHeightColor(n) {
         let height = Math.abs(n) * 256;
-        let hex = height.toString(16);
+        let hex = Math.floor(height).toString(16);
+        console.log(hex);
         return '0x' + hex + hex + hex;
     }
 }
