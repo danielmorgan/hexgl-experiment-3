@@ -20,22 +20,27 @@ export default class HexGrid extends PIXI.Container {
         let layout = new Layout(
             ORIENTATION_POINTY,
             { width: window.innerWidth, height: window.innerHeight },
-            { width: 15, height: 15 },
+            { width: 5, height: 5 },
             new PIXI.Point(0, 0),
             true
         );
 
         // grid
+        let log = [];
         let grid = new Grid(layout);
         let rectangle = grid.rectangle();
         for (let axial of rectangle) {
             let point = axial.toPixel(layout);
-            let perlin = noiseGenerator.perlin2(point.x / 100, point.y / 100);
+            let perlin = noiseGenerator.perlin2(point.x, point.y);
             let color = this.perlinToHeightColor(perlin);
             let hex = new Hex(layout, point, color);
             // this.addChild(this.debug(hex, axial));
             this.addChild(hex);
+
+            log.push(Math.abs(perlin) * 255);
         }
+
+        console.log(log);
 
         this.cacheAsBitmap = true;
     }
@@ -77,9 +82,16 @@ export default class HexGrid extends PIXI.Container {
     }
 
     perlinToHeightColor(n) {
-        let height = Math.abs(n) * 256;
-        let hex = Math.floor(height).toString(16);
-        console.log(hex);
-        return '0x' + hex + hex + hex;
+        let height = Math.floor(Math.abs(n) * 256);
+        return rgbToHex(height, height, height);
+
+        function rgbToHex(r, g, b) {
+            return '0X' + componentToHex(r) + componentToHex(g) + componentToHex(b);
+
+            function componentToHex(c) {
+                var hex = c.toString(16);
+                return hex.length == 1 ? "0" + hex : hex;
+            }
+        }
     }
 }

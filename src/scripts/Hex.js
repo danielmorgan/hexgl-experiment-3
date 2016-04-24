@@ -10,7 +10,7 @@ export default class Hex extends PIXI.Graphics {
         this.layout = layout;
 
         this.beginFill(color, 1);
-        this.lineStyle(2, 0x000000, 1);
+        //this.lineStyle(0, 0x000000, 1);
         this.drawPolygon(this.points());
         this.endFill();
     }
