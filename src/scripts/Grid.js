@@ -6,14 +6,12 @@ import Hex from './Hex';
 export default class Grid {
     constructor(layout) {
         let hex = new Hex(layout);
-        let constraintOffset = (layout.constrain) ? -1 : 1;
-
-        this.pixelWidth = layout.bounds.width;
-        this.pixelHeight = layout.bounds.height * 1.5;
-        this.gridWidth = Math.round(this.pixelWidth / hex.width) + constraintOffset;
-        this.gridHeight = Math.round(this.pixelHeight / hex.height) + constraintOffset - 1;
-        this.pixelWidthRemainder = Math.abs(this.gridWidth - this.pixelWidth / layout.size.width);
-        this.pixelHeightRemainder = Math.abs(this.gridHeight - this.pixelHeight / layout.size.height);
+        this.pixelHorizontalLimit = (layout.bounds.width - hex.width) / (Math.sqrt(3) / 2) - hex.width / 2;
+        this.pixelVerticalLimit = (layout.bounds.height * 1.5) - hex.height;
+        this.gridWidth = Math.floor(this.pixelHorizontalLimit / hex.width);
+        this.gridHeight = Math.floor(this.pixelVerticalLimit / hex.height);
+        this.pixelWidthRemainder = Math.abs(this.gridWidth - layout.bounds.width / layout.size.width);
+        this.pixelHeightRemainder = Math.abs(this.gridHeight - layout.bounds.height / layout.size.height);
     }
 
     parallelogram() {

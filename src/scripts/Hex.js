@@ -3,30 +3,30 @@
 import PIXI from 'pixi.js';
 
 export default class Hex extends PIXI.Graphics {
-    constructor(layout, center = new PIXI.Point(0, 0)) {
+    constructor(layout, center = new PIXI.Point(0, 0), color = 0x000000) {
         super();
 
         this.center = center;
         this.layout = layout;
 
-        this.beginFill(0x000000, 0);
-        this.lineStyle(1, 0x000000, 0.2);
-        this.drawPolygon(this.hexCoords());
+        this.beginFill(color, 1);
+        this.lineStyle(2, 0x000000, 1);
+        this.drawPolygon(this.points());
         this.endFill();
     }
 
-    hexCoords() {
-        let coords = [];
+    points() {
+        let points = [];
 
         for (let i = 1; i <= 6; i++) {
-            let point = this.cornerPoint(this.center, i);
-            coords.push(point.x, point.y);
+            let point = this.corner(this.center, i);
+            points.push(point.x, point.y);
         }
 
-        return coords;
+        return points;
     }
 
-    cornerPoint(center, i) {
+    corner(center, i) {
         let angleDeg = 60 * i + this.layout.orientation.startAngle;
         let angleRad = Math.PI / 180 * angleDeg;
         let x = center.x + this.layout.size.width * Math.cos(angleRad);

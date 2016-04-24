@@ -17,7 +17,7 @@ export default class HexGrid extends PIXI.Container {
         let layout = new Layout(
             LAYOUT_POINTY,
             { width: window.innerWidth, height: window.innerHeight },
-            { width: 25, height: 25 },
+            { width: 15, height: 15 },
             new PIXI.Point(0, 0),
             true
         );
@@ -27,34 +27,46 @@ export default class HexGrid extends PIXI.Container {
         let rectangle = grid.rectangle();
         for (let axial of rectangle) {
             let point = axial.toPixel(layout);
-            let hex = new Hex(layout, point);
-            // this.addChild(this.debug(hex));
+            let hex = new Hex(layout, point, this.randomGrey());
+            // this.addChild(this.debug(hex, axial));
             this.addChild(hex);
-        }
-
-        if (layout.constrain) {
-            this.x = grid.pixelWidthRemainder / 2;
-            this.y = grid.pixelHeightRemainder / 2;
         }
 
         this.cacheAsBitmap = true;
     }
 
-    debug(hex) {
+    debug(hex, axial) {
         let b = hex.getBounds();
         let g = new PIXI.Graphics();
-        g.beginFill(0xff0000, 1);
+        g.beginFill(0xff0000, 0.5);
         g.drawRect(b.x, b.y, b.width, b.height);
         g.endFill();
 
-        return g;
+        let t = new PIXI.Text(axial.q + ', ' + axial.r, {
+            font: Math.round(hex.layout.size.width / 2) + 'px Arial'
+        });
+        t.anchor = new PIXI.Point(0.5, 0.5);
+        t.x = Math.round(b.x + b.width/2);
+        t.y = Math.round(b.y + b.height/2);
+
+        return t;
     }
 
-    getRandomColor() {
+    randomColor() {
         var letters = '0123456789ABCDEF'.split('');
         var color = '0x';
         for (var i = 0; i < 6; i++ ) {
             color += letters[Math.floor(Math.random() * letters.length)];
+        }
+        return color;
+    }
+
+    randomGrey() {
+        var letters = '0123456789ABCDEF'.split('');
+        var color = '0x';
+        var letter = Math.floor(Math.random() * letters.length);
+        for (var i = 0; i < 6; i++ ) {
+            color += letters[letter];
         }
         return color;
     }

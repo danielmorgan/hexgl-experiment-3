@@ -17,7 +17,7 @@ class Game {
         this.stats = new Stats();
 
         this.$container.append(this.renderer.view);
-        this.$container.append(this.stats.dom);
+        $('body').append($(this.stats.dom).addClass('stats'));
 
         this.setTheStage();
         this.update();
