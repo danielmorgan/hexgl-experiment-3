@@ -2,32 +2,40 @@
 
 import PIXI from 'pixi.js';
 import $ from 'jquery';
+import Stats from 'stats.js';
+import HexGrid from './HexGrid';
 
 class Game {
     constructor() {
-        this.renderer = new PIXI.autoDetectRenderer(window.innerWidth, window.innerHeight);
+        this.renderer = new PIXI.autoDetectRenderer(
+            window.innerWidth,
+            window.innerHeight,
+            { backgroundColor: 0xd6cca9 }
+        );
         this.stage = new PIXI.Container();
         this.$container = $('#game');
+        this.stats = new Stats();
 
         this.$container.append(this.renderer.view);
+        this.$container.append(this.stats.dom);
 
-        let text = new PIXI.Text('Hello World!', {
-            font: '48px Arial',
-            fill: 0xffffff,
-            align: 'center'
-        });
-        text.x = Math.round((window.innerWidth / 2) - (text.width / 2));
-        text.y = Math.round((window.innerHeight / 2) - (text.height / 2));
-        this.stage.addChild(text);
-
+        this.setTheStage();
         this.update();
     }
 
+    setTheStage() {
+        let hexGrid = new HexGrid();
+        this.stage.addChild(hexGrid);
+    }
+
     update() {
-        console.log('update');
+        this.stats.begin();
         this.renderer.render(this.stage);
+        this.stats.end();
         requestAnimationFrame(this.update.bind(this));
     }
 }
 
-new Game();
+$(function() {
+    window.game = new Game();
+});
