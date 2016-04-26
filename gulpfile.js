@@ -32,7 +32,7 @@ gulp.task('scripts', ['clean-scripts'], function() {
     return gulp.src(paths.scriptsEntryPoint)
         .pipe(plumber())
         .pipe(through2.obj(function(file, enc, next) {
-            browserify(file.path, assign({ debug: true }, watchify.args))
+            browserify(file.path, assign({ debug: true, cache: {}, packageCache: {} }, watchify.args))
                 .plugin(watchify, { ignoreWatch: ['**/node_modules/**'] })
                 .transform('babelify', { presets: ['es2015'] })
                 .bundle(function(err, res) { if (err) { return next(err); } file.contents = res; next(null, file); });
