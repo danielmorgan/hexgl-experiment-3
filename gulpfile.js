@@ -8,9 +8,9 @@ var gulp        = require('gulp'),
     rename      = require('gulp-rename'),
     browserSync = require('browser-sync').create(),
     clean       = require('gulp-clean'),
-    watchify    = require('watchify'),
     buffer      = require('vinyl-buffer'),
-    assign      = require('lodash.assign');
+    assign      = require('lodash.assign'),
+    browserifyInc = require('browserify-incremental');
 
 var paths = {
     src: './src/',
@@ -32,10 +32,17 @@ gulp.task('scripts', ['clean-scripts'], function() {
     return gulp.src(paths.scriptsEntryPoint)
         .pipe(plumber())
         .pipe(through2.obj(function(file, enc, next) {
-            browserify(file.path, assign({ debug: true, cache: {}, packageCache: {} }, watchify.args))
-                .plugin(watchify, { ignoreWatch: ['**/node_modules/**'] })
-                .transform('babelify', { presets: ['es2015'] })
-                .bundle(function(err, res) { if (err) { return next(err); } file.contents = res; next(null, file); });
+            var browserifyObj = browserify(file.path, { debug: true, cache: {}, packageCache: {}, fullPaths: true })
+                .transform('babelify', { presets: ['es2015'] });
+            var bundler = browserifyInc(browserifyObj,  {cacheFile: './browserify-cache.json'});
+
+            bundler.bundle(function(err, res) {
+                if (err) {
+                    return next(err);
+                }
+
+                file.contents = res; next(null, file);
+            });
         }))
         .on('error', function (error) {
             console.log(error.stack);
