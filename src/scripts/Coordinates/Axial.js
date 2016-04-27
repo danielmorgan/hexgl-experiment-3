@@ -34,6 +34,22 @@ export default class Axial {
 
         return new PIXI.Point(x, y);
     }
+
+    apply(axial) {
+        let q = this.q + axial.q;
+        let r = this.q + axial.r;
+
+        return new Axial(q, r);
+    }
+
+    neighbours() {
+        let neighbours = [];
+        for (let direction of Directions) {
+            neighbours.push(this.apply(direction));
+        }
+
+        return neighbours;
+    }
 }
 
 export const Directions = [
