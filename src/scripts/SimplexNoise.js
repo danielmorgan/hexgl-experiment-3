@@ -172,4 +172,18 @@ export default class SimplexNoise {
         // The result is scaled to stay just inside [-1,1]
         return 32.0*(n0 + n1 + n2 + n3);
     }
+
+    getColor(perlin) {
+        let height = Math.floor(Math.abs(perlin) * 256);
+        return rgbToHex(height, height, height);
+
+        function rgbToHex(r, g, b) {
+            return '0X' + componentToHex(r) + componentToHex(g) + componentToHex(b);
+
+            function componentToHex(c) {
+                var hex = c.toString(16);
+                return hex.length == 1 ? "0" + hex : hex;
+            }
+        }
+    }
 }

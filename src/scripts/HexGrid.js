@@ -3,58 +3,47 @@
 import PIXI from 'pixi.js';
 import SimplexNoise from './SimplexNoise';
 import Hex from './Hex';
-import Grid from './Grid';
 import { ORIENTATION_POINTY } from './Coordinates/Orientation';
 import Layout from './Coordinates/Layout';
+import Axial from './Coordinates/Axial';
 
 export default class HexGrid extends PIXI.Container {
     constructor() {
         super();
-        this.draw();
-    }
 
-    draw() {
-        // layout
-        let layout = new Layout(
+        this.layout = new Layout(
             ORIENTATION_POINTY,
-            { width: window.innerWidth * 0.9, height: window.innerHeight * 0.9 },
-            { width: 10, height: 10 },
+            { width: window.innerWidth, height: window.innerHeight },
+            { width: 20, height: 20 },
             new PIXI.Point(0, 0),
             true
         );
 
-        // grid
-        let log = [];
-        let grid = new Grid(layout);
-        let rectangle = grid.rectangle();
-        let simplexNoiseGenerator = new SimplexNoise();
-        for (let axial of rectangle) {
-            let point = axial.toPixel(layout);
-            let perlin = simplexNoiseGenerator.generate(point.x, point.y);
-            let color = this.perlinToHeightColor(perlin);
-            let hex = new Hex(layout, point, color);
-            this.addChild(hex);
+        this.simplexNoiseGenerator = new SimplexNoise();
 
-            log.push(Math.floor(Math.abs(perlin) * 256));
-        }
+        let hex = new Hex(this.layout);
+        this.pixelHorizontalLimit = (this.layout.bounds.width - hex.width) / (Math.sqrt(3) / 2) - hex.width / 2;
+        this.pixelVerticalLimit = (this.layout.bounds.height * 1.5) - hex.height;
+        this.gridWidth = Math.floor(this.pixelHorizontalLimit / hex.width);
+        this.gridHeight = Math.floor(this.pixelVerticalLimit / hex.height);
+        this.pixelWidthRemainder = Math.abs(this.gridWidth - this.layout.bounds.width / this.layout.size.width);
+        this.pixelHeightRemainder = Math.abs(this.gridHeight - this.layout.bounds.height / this.layout.size.height);
 
-        console.log(log);
-        console.log(Math.min.apply(null, log), Math.max.apply(null, log));
-
-        this.cacheAsBitmap = true;
+        this.rectangle();
     }
 
-    perlinToHeightColor(perlin) {
-        let height = Math.floor(Math.abs(perlin) * 256);
-        return rgbToHex(height, height, height);
-
-        function rgbToHex(r, g, b) {
-            return '0X' + componentToHex(r) + componentToHex(g) + componentToHex(b);
-
-            function componentToHex(c) {
-                var hex = c.toString(16);
-                return hex.length == 1 ? "0" + hex : hex;
+    rectangle() {
+        for (let r = 0; r < this.gridHeight; r++) {
+            let rOffset = Math.floor(r / 2);
+            for (let q = -rOffset; q < this.gridWidth - rOffset; q++) {
+                let coord = new Axial(q, r);
+                let pixelCoords = coord.toPixel(this.layout);
+                let noise = this.simplexNoiseGenerator.generate(pixelCoords.x, pixelCoords.y);
+                let color = this.simplexNoiseGenerator.getColor(noise);
+                this.addChild(new Hex(this.layout, pixelCoords, color));
             }
         }
+
+        this.cacheAsBitmap = true;
     }
 }
