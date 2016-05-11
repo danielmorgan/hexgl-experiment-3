@@ -3,11 +3,14 @@
 import PIXI from 'pixi.js';
 
 export default class Hex extends PIXI.Graphics {
-    constructor(layout, center = new PIXI.Point(0, 0), color = 0x000000) {
+    constructor(layout, center = new PIXI.Point(0, 0), color = 0x000000, q = 0, r = 0) {
         super();
 
         this.center = center;
         this.layout = layout;
+
+        this.q = q;
+        this.r = r;
 
         this.beginFill(color, 1);
         //this.lineStyle(0, 0x000000, 1);

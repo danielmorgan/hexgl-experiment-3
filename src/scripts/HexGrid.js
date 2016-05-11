@@ -33,27 +33,40 @@ export default class HexGrid extends PIXI.Container {
         this.pixelHeightRemainder = Math.abs(this.gridHeight - this.layout.bounds.height / this.layout.size.height);
 
         this.addChild(this.parallelogramRadius1(1));
+        this.addChild(this.test());
     }
 
     parallelogramRadius1() {
         let container = new PIXI.Container();
 
-        let color = this.simplexNoiseGenerator.getColor(this.simplexNoiseGenerator.generate(0, 0));
-
         for (let r = 0; r < this.gridHeight; r++) {
             let rOffset = Math.floor(r / 2);
             terms.forward(3);
-
             for (let q = 0; q < this.gridWidth; q++) {
                 let coord = new Axial(q, r);
                 let pixelCoords = coord.toPixel(this.layout);
-
-                if (true) {
-                    color = this.simplexNoiseGenerator.getColor(this.simplexNoiseGenerator.generate(Math.floor(coord.q), Math.floor(coord.r)));
-                }
-                container.addChild(new Hex(this.layout, pixelCoords, color));
-
+                container.addChild(new Hex(this.layout, pixelCoords, terms.current(), q, r));
                 terms.next();
+            }
+        }
+
+        container.cacheAsBitmap = true;
+        return container;
+    }
+
+    test() {
+        let hexes = this.getChildAt(0).children;
+        let centerHexes = hexes.filter(h => h.currentPath.fillColor === '0x333333');
+        let container = new PIXI.Container();
+
+        for (let hex of centerHexes) {
+            let coord = new Axial(hex.q, hex.r);
+            let pixelCoords = coord.toPixel(this.layout);
+            let color = this.simplexNoiseGenerator.getColor(hex.q, hex.r);
+            container.addChild(new Hex(this.layout, pixelCoords, color));
+            for (let neighbour of coord.neighbours()) {
+                let pixelCoords = neighbour.toPixel(this.layout);
+                container.addChild(new Hex(this.layout, pixelCoords, color));
             }
         }
 

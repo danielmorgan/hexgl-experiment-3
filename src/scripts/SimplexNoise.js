@@ -173,7 +173,8 @@ export default class SimplexNoise {
         return 32.0*(n0 + n1 + n2 + n3);
     }
 
-    getColor(perlin) {
+    getColor(xin, yin) {
+        let perlin = this.generate(xin, yin);
         let height = Math.floor(Math.abs(perlin) * 256);
         return rgbToHex(height, height, height);
 
