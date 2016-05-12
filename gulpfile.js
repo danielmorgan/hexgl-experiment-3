@@ -30,7 +30,10 @@ var paths = {
 
 gulp.task('scripts', ['clean-scripts'], function() {
     return gulp.src(paths.scriptsEntryPoint)
-        .pipe(plumber())
+        .pipe(plumber(function(error) {
+            console.log("Error happend!", error.message);
+            this.emit('end');
+        }))
         .pipe(through2.obj(function(file, enc, next) {
             var browserifyObj = browserify(file.path, { debug: true, cache: {}, packageCache: {}, fullPaths: true })
                 .transform('babelify', { presets: ['es2015'] });
@@ -38,6 +41,7 @@ gulp.task('scripts', ['clean-scripts'], function() {
 
             bundler.bundle(function(err, res) {
                 if (err) {
+                    this.emit('end');
                     return next(err);
                 }
 
@@ -46,7 +50,7 @@ gulp.task('scripts', ['clean-scripts'], function() {
         }))
         .on('error', function (error) {
             console.log(error.stack);
-            this.emit('end')
+            this.emit('end');
         })
         .pipe(buffer())
         .pipe(rename('build.js'))

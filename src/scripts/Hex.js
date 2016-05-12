@@ -3,17 +3,21 @@
 import PIXI from 'pixi.js';
 
 export default class Hex extends PIXI.Graphics {
-    constructor(layout, center = new PIXI.Point(0, 0), color = 0x000000, q = 0, r = 0) {
+    constructor(layout, center = new PIXI.Point(0, 0), color = 0x000000, outline = false, q = 0, r = 0, term) {
         super();
 
-        this.center = center;
         this.layout = layout;
-
+        this.center = center;
+        this.color = color;
         this.q = q;
         this.r = r;
+        this.term = term;
 
-        this.beginFill(color, 1);
-        //this.lineStyle(0, 0x000000, 1);
+        if (outline) {
+            this.lineStyle(1, 0x000000, 0.1);
+        } else {
+            this.beginFill(this.color, 1);
+        }
         this.drawPolygon(this.points());
         this.endFill();
     }
