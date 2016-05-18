@@ -7,8 +7,38 @@ import Layout from './Coordinates/Layout';
 import Axial from './Coordinates/Axial';
 import Hex from './Hex';
 
+
+class Node {
+    constructor(layout, q, r, term = 0) {
+        this.layout = layout;
+        this.axial = new Axial(q, r);
+        this.cube = this.axial.toCube();
+        this.pixel = this.axial.toPixel(this.layout);
+        this.term = term;
+    }
+}
+
+class Cluster extends Node {
+    constructor(radius, layout, q, r, term = 0) {
+        super(layout, q, r, term);
+
+        this.radius = radius;
+        this.nodes = [];
+
+        this.nodes.push(new Node(layout, q, r, term));
+        this.nodes[0].axial.neighbours().forEach(n => {
+            let node = new Node(layout, n.q, n.r, term);
+            this.nodes.push(node);
+        })
+    }
+}
+
+
 export default class Grid {
-    constructor() {
+    constructor(radius) {
+        this.size = 0;
+        this.radius = radius;
+
         this.layout = new Layout(
             ORIENTATION_POINTY,
             { width: window.innerWidth * 0.89, height: window.innerHeight * 0.9 },
@@ -33,26 +63,40 @@ export default class Grid {
         const terms = new IterableArray([0, 1, 2, 3, 4, 5, 6]);
         let graph = [];
 
-        for (let r = 0; r < this.gridHeight; r++) {
-            terms.forward(3);
-            for (let q = 0; q < this.gridWidth; q++) {
-                let axial = new Axial(q, r);
+        /**
+         * Single hex
+         */
+        if (this.radius === 0) {
+            for (let r = 0; r < this.gridHeight; r++) {
+                terms.forward(3);
+                graph[r] = [];
+                for (let q = 0; q < this.gridWidth; q++) {
+                    graph[r][q] = new Node(this.layout, q, r, terms.current());
+                    terms.next();
+                    this.size++;
+                }
+            }
+        }
 
-                graph.push({
-                    term: terms.current(),
-                    axial: axial,
-                    cube: axial.toCube(),
-                    pixel: axial.toPixel(this.layout)
-                });
-
-                terms.next();
+        /**
+         * Radius of one hex, 7 in total
+         */
+        if (this.radius === 1) {
+            for (let r = 0; r < this.gridHeight; r++) {
+                terms.forward(3);
+                graph[r] = [];
+                for (let q = 0; q < this.gridWidth; q++) {
+                    if (terms.current() === 0) {
+                        graph[r][q] = new Cluster(1, this.layout, q, r, terms.current());
+                        //graph[r][q]['neighbours'] = [];
+                        //graph[r][q].axial.neighbours().forEach(node => graph[r][q]['neighbours'].push(node));
+                    }
+                    terms.next();
+                    this.size++;
+                }
             }
         }
 
         return graph;
-    }
-
-    filterGraphToRadius1() {
-        return this.graph.filter(n => n.term === 3);
     }
 }
