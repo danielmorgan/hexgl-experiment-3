@@ -39,6 +39,7 @@ export default class Grid {
                 let axial = new Axial(q, r);
 
                 graph.push({
+                    term: terms.current(),
                     axial: axial,
                     cube: axial.toCube(),
                     pixel: axial.toPixel(this.layout)
@@ -49,5 +50,9 @@ export default class Grid {
         }
 
         return graph;
+    }
+
+    filterGraphToRadius1() {
+        return this.graph.filter(n => n.term === 3);
     }
 }
