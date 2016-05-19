@@ -11,8 +11,8 @@ export default class HexGrid extends PIXI.Container {
     constructor() {
         super();
 
-        this.addChild(this.draw(new Grid(0)));
-        this.addChild(this.draw(new Grid(1), 0.75));
+        //this.addChild(this.draw(new Grid(0)));
+        this.addChild(this.draw(new Grid(1), 1.00));
     }
 
     draw(grid, alpha = 1) {
@@ -24,11 +24,14 @@ export default class HexGrid extends PIXI.Container {
                 let color = noise.getColor(node.pixel.x, node.pixel.y);
 
                 if (grid.radius > 0) {
-                    node.nodes.forEach(n => container.addChild(new Hex(grid.layout, n.pixel, color)));
+                    let cluster = node;
+                    cluster.nodes.forEach(n => {
+                        console.log(n);
+                        container.addChild(new Hex(grid.layout, n.pixel, color))
+                    });
                 }
 
-                let hex = new Hex(grid.layout, node.pixel, color);
-                container.addChild(hex);
+                container.addChild(new Hex(grid.layout, node.pixel, color));
             });
         });
 

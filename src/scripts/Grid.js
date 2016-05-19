@@ -25,11 +25,18 @@ class Cluster extends Node {
         this.radius = radius;
         this.nodes = [];
 
-        this.nodes.push(new Node(layout, q, r, term));
-        this.nodes[0].axial.neighbours().forEach(n => {
-            let node = new Node(layout, n.q, n.r, term);
-            this.nodes.push(node);
-        })
+        let center = new Node(layout, q, r, term);
+        this.nodes.push(center);
+
+        center.cube.ring(radius).forEach(cube => {
+            let axial = cube.toAxial();
+            this.nodes.push(new Node(layout, axial.q, axial.r, term));
+        });
+
+        //center.axial.neighbours().forEach(axial => {
+        //    let node = new Node(layout, axial.q, axial.r, term);
+        //    this.nodes.push(node);
+        //});
     }
 }
 
@@ -79,17 +86,15 @@ export default class Grid {
         }
 
         /**
-         * Radius of one hex, 7 in total
+         * Radius of hexes
          */
-        if (this.radius === 1) {
+        if (this.radius > 0) {
             for (let r = 0; r < this.gridHeight; r++) {
                 terms.forward(3);
                 graph[r] = [];
                 for (let q = 0; q < this.gridWidth; q++) {
                     if (terms.current() === 0) {
-                        graph[r][q] = new Cluster(1, this.layout, q, r, terms.current());
-                        //graph[r][q]['neighbours'] = [];
-                        //graph[r][q].axial.neighbours().forEach(node => graph[r][q]['neighbours'].push(node));
+                        graph[r][q] = new Cluster(this.radius, this.layout, q, r, terms.current());
                     }
                     terms.next();
                     this.size++;

@@ -20,6 +20,48 @@ export default class Cube {
     toPixel() {
         return this.toAxial().toPixel();
     }
+
+    apply(cube) {
+        this.x += cube.x;
+        this.y += cube.y;
+        this.z += cube.z;
+
+        return new Cube(this.x, this.y, this.z);
+    }
+
+    direction(direction) {
+        return Directions[direction];
+    }
+
+    neighbour(direction) {
+        return this.apply(this.direction(direction));
+    }
+
+    distance(target) {
+        return (Math.abs(this.x - target.x) + Math.abs(this.y - target.y) + Math.abs(this.z - target.z)) / 2;
+    }
+
+    scale(scale) {
+        this.x *= scale;
+        this.y *= scale;
+        this.z *= scale;
+
+        return new Cube(this.x, this.y, this.z);
+    }
+
+    ring(radius) {
+        let results = [];
+        let cube = this.apply(this.scale(radius));
+
+        for (let i = 0; i < 6; i++) {
+            for (let j = 0; j < radius; j++) {
+                results.push(cube);
+                cube = this.neighbour(i);
+            }
+        }
+
+        return results;
+    }
 }
 
 export const Directions = [

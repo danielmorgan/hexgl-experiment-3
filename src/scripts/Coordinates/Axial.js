@@ -36,10 +36,10 @@ export default class Axial {
     }
 
     apply(axial) {
-        let q = this.q + axial.q;
-        let r = this.r + axial.r;
+        this.q += axial.q;
+        this.r += axial.r;
 
-        return new Axial(q, r);
+        return new Axial(this.q, this.r);
     }
 
     neighbours() {
