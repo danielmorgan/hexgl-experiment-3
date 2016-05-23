@@ -62,6 +62,18 @@ export default class Cube {
 
         return results;
     }
+
+    spiral(radius) {
+        let results = [];
+
+        for (let i = 1; i <= radius; i++) {
+            this.ring(i).forEach(cube => {
+                results.push(cube);
+            });
+        }
+
+        return results;
+    }
 }
 
 export const Directions = [

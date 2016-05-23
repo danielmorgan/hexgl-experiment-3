@@ -28,15 +28,10 @@ class Cluster extends Node {
         let center = new Node(layout, q, r, term);
         this.nodes.push(center);
 
-        center.cube.ring(radius).forEach(cube => {
+        center.cube.spiral(radius).forEach(cube => {
             let axial = cube.toAxial();
             this.nodes.push(new Node(layout, axial.q, axial.r, term));
         });
-
-        //center.axial.neighbours().forEach(axial => {
-        //    let node = new Node(layout, axial.q, axial.r, term);
-        //    this.nodes.push(node);
-        //});
     }
 }
 
