@@ -26,7 +26,6 @@ export default class HexGrid extends PIXI.Container {
                 if (grid.radius > 0) {
                     let cluster = node;
                     cluster.nodes.forEach(n => {
-                        console.log(n);
                         container.addChild(new Hex(grid.layout, n.pixel, color))
                     });
                 }

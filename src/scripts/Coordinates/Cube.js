@@ -22,11 +22,11 @@ export default class Cube {
     }
 
     apply(cube) {
-        this.x += cube.x;
-        this.y += cube.y;
-        this.z += cube.z;
+        let x = this.x + cube.x;
+        let y = this.y + cube.y;
+        let z = this.z + cube.z;
 
-        return new Cube(this.x, this.y, this.z);
+        return new Cube(x, y, z);
     }
 
     direction(direction) {
@@ -42,11 +42,11 @@ export default class Cube {
     }
 
     scale(scale) {
-        this.x *= scale;
-        this.y *= scale;
-        this.z *= scale;
+        let x = this.x * scale;
+        let y = this.y * scale;
+        let z = this.z * scale;
 
-        return new Cube(this.x, this.y, this.z);
+        return new Cube(x, y, z);
     }
 
     ring(radius) {
@@ -55,8 +55,8 @@ export default class Cube {
 
         for (let i = 0; i < 6; i++) {
             for (let j = 0; j < radius; j++) {
-                results.push(cube);
                 cube = this.neighbour(i);
+                results.push(cube);
             }
         }
 

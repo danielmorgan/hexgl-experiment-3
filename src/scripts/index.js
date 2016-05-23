@@ -15,7 +15,7 @@ class Game {
         this.stage = new PIXI.Container();
         this.$container = $('#game');
         this.stats = new Stats();
-        this.stats.mode = 0;
+        this.stats.mode = 1;
 
         this.$container.append(this.renderer.view);
         $('body').append($(this.stats.dom).addClass('stats'));
