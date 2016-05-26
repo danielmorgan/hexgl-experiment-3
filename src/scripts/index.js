@@ -3,7 +3,7 @@
 import PIXI from 'pixi.js';
 import $ from 'jquery';
 import Stats from 'stats.js';
-import HexGrid from './HexGrid';
+import World from './World';
 
 class Game {
     constructor() {
@@ -35,8 +35,8 @@ class Game {
     }
 
     setTheStage() {
-        let hexGrid = new HexGrid();
-        this.stage.addChild(hexGrid);
+        let world = new World();
+        this.stage.addChild(world);
     }
 
     update() {
