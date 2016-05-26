@@ -14,14 +14,13 @@ export default class World extends PIXI.Container {
 
     draw(grid, alpha = 1) {
         let container = new PIXI.Container();
-        let noise = new SimplexNoise();
+        let colors = SimplexNoise.colors(grid.graph, 100);
 
         for (let r = 0; r < grid.graph.length; r++) {
             for (let q = 0; q < grid.graph[r].length; q++) {
                 let hex = grid.graph[r][q];
                 let point = hex.toPixel(grid.layout);
-                let color = noise.getColor(point);
-                let graphic = new HexGraphic(grid.layout, point, color);
+                let graphic = new HexGraphic(grid.layout, point, colors[r][q]);
                 container.addChild(graphic);
             }
         }

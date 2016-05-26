@@ -5,10 +5,14 @@
 // Sean McCullough banksean@gmail.com
 
 export default class SimplexNoise {
-    constructor() {
+    static dot(g, x, y) {
+        return g[0] * x + g[1] * y;
+    }
+
+    static generate(xin, yin) {
         this.grad3 = [[1,1,0],[-1,1,0],[1,-1,0],[-1,-1,0],
-            [1,0,1],[-1,0,1],[1,0,-1],[-1,0,-1],
-            [0,1,1],[0,-1,1],[0,1,-1],[0,-1,-1]];
+        [1,0,1],[-1,0,1],[1,0,-1],[-1,0,-1],
+        [0,1,1],[0,-1,1],[0,1,-1],[0,-1,-1]];
         this.p = [];
         for (var i=0; i<256; i++) {
             this.p[i] = Math.floor(Math.random()*256);
@@ -19,24 +23,7 @@ export default class SimplexNoise {
             this.perm[i]=this.p[i & 255];
         }
 
-        // A lookup table to traverse the simplex around a given point in 4D.
-        // Details can be found where this table is used, in the 4D noise method.
-        this.simplex = [
-            [0,1,2,3],[0,1,3,2],[0,0,0,0],[0,2,3,1],[0,0,0,0],[0,0,0,0],[0,0,0,0],[1,2,3,0],
-            [0,2,1,3],[0,0,0,0],[0,3,1,2],[0,3,2,1],[0,0,0,0],[0,0,0,0],[0,0,0,0],[1,3,2,0],
-            [0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0],
-            [1,2,0,3],[0,0,0,0],[1,3,0,2],[0,0,0,0],[0,0,0,0],[0,0,0,0],[2,3,0,1],[2,3,1,0],
-            [1,0,2,3],[1,0,3,2],[0,0,0,0],[0,0,0,0],[0,0,0,0],[2,0,3,1],[0,0,0,0],[2,1,3,0],
-            [0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0],
-            [2,0,1,3],[0,0,0,0],[0,0,0,0],[0,0,0,0],[3,0,1,2],[3,0,2,1],[0,0,0,0],[3,1,2,0],
-            [2,1,0,3],[0,0,0,0],[0,0,0,0],[0,0,0,0],[3,1,0,2],[0,0,0,0],[3,2,0,1],[3,2,1,0]];
-    }
 
-    dot(g, x, y) {
-        return g[0] * x + g[1] * y;
-    }
-
-    generate(xin, yin) {
         var n0, n1, n2; // Noise contributions from the three corners
         // Skew the input space to determine which simplex cell we're in
         var F2 = 0.5*(Math.sqrt(3.0)-1.0);
@@ -91,7 +78,20 @@ export default class SimplexNoise {
         return 70.0 * (n0 + n1 + n2);
     }
 
-    generate3d(xin, yin, zin) {
+    static generate3d(xin, yin, zin) {
+        this.grad3 = [[1,1,0],[-1,1,0],[1,-1,0],[-1,-1,0],
+            [1,0,1],[-1,0,1],[1,0,-1],[-1,0,-1],
+            [0,1,1],[0,-1,1],[0,1,-1],[0,-1,-1]];
+        this.p = [];
+        for (var i=0; i<256; i++) {
+            this.p[i] = Math.floor(Math.random()*256);
+        }
+        // To remove the need for index wrapping, double the permutation table length
+        this.perm = [];
+        for(var i=0; i<512; i++) {
+            this.perm[i]=this.p[i & 255];
+        }
+
         var n0, n1, n2, n3; // Noise contributions from the four corners
         // Skew the input space to determine which simplex cell we're in
         var F3 = 1.0/3.0;
@@ -173,21 +173,26 @@ export default class SimplexNoise {
         return 32.0*(n0 + n1 + n2 + n3);
     }
 
-    getColor(point) {
-        let xin = point.x;
-        let yin = point.y;
+    static colors(graph, intensity = 50) {
+        let colors = [];
 
-        let perlin = this.generate(xin, yin);
-        let height = Math.floor(Math.abs(perlin) * 256);
-        return rgbToHex(height, height, height);
-
-        function rgbToHex(r, g, b) {
-            return '0X' + componentToHex(r) + componentToHex(g) + componentToHex(b);
-
-            function componentToHex(c) {
-                var hex = c.toString(16);
-                return hex.length == 1 ? "0" + hex : hex;
+        for (let r = 0; r < graph.length; r++) {
+            colors[r] = [];
+            for (var q = 0; q < graph[r].length; q++) {
+                let value = this.generate(q / intensity, r / intensity) * 256;
+                colors[r][q] = this.toGrayscale(Math.round(Math.abs(value)));
             }
         }
+
+        return colors;
+    }
+
+    static toGrayscale(value) {
+        let hex = () => {
+            var hex = value.toString(16);
+            return hex.length == 1 ? '0' + hex : hex;
+        };
+
+        return '0x' + hex() + hex() + hex();
     }
 }
