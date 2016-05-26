@@ -5,7 +5,7 @@ import PIXI from 'pixi.js';
 export default class Hex {
     constructor(q, r, s = null) {
         if (s === null) {
-            s = -q-r;
+            s = -q - r;
         }
 
         if (q + r + s === 0) {
@@ -33,6 +33,14 @@ export default class Hex {
         if (layout.constrain) y += layout.size.height;
 
         return new PIXI.Point(x, y);
+    }
+
+    static createFromOffset(q, r) {
+        let newQ = q;
+        let newS = (q % 2 === 0) ? r - (q + 1) / 2 : r - q / 2;
+        let newR = -newQ - newS;
+
+        return new Hex(newQ, newR, newS);
     }
 
     static add(a, b) {
@@ -69,6 +77,20 @@ export default class Hex {
 
     static distance(a, b) {
         return this.length(this.subtract(a, b));
+    }
+
+    static ring(hex, radius) {
+        var results = []
+        var cube = this.add(hex, this.scale(new Hex(-1, 1, 0), radius))
+
+        for (var i = 0; i < 6; i ++) {
+            for (var j = 0; j < radius; j ++) {
+                results.push(cube);
+                cube = Hex.neighbour(cube, i);
+            }
+        }
+
+        return results;
     }
 }
 

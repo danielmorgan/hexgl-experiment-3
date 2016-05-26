@@ -3,7 +3,7 @@
 import PIXI from 'pixi.js';
 import { ORIENTATION_POINTY } from './Coordinates/Orientation';
 import Layout from './Coordinates/Layout';
-import Axial from './Coordinates/Hex';
+import Hex from './Coordinates/Hex';
 import HexGraphic from './HexGraphic';
 
 export default class Grid {
@@ -28,6 +28,14 @@ export default class Grid {
     }
 
     generateGraph() {
-        return [];
-    }
+        var graph = [];
+
+        for (var r = 0; r < this.gridHeight; r++) {
+            graph[r] = [];
+            for (var q = 0; q < this.gridWidth; q++) {
+                graph[r][q] = new Hex(q, r);
+                this.size++;
+            }
+        }
+        return graph;    }
 }
