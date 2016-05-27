@@ -173,18 +173,18 @@ export default class SimplexNoise {
         return 32.0*(n0 + n1 + n2 + n3);
     }
 
-    static colors(graph, intensity = 50) {
-        let colors = [];
+    static heightMap(graph, intensity = 50) {
+        let heightMap = [];
 
         for (let r = 0; r < graph.length; r++) {
-            colors[r] = [];
+            heightMap[r] = [];
             for (var q = 0; q < graph[r].length; q++) {
                 let value = this.generate(q / intensity, r / intensity) * 256;
-                colors[r][q] = this.toGrayscale(Math.round(Math.abs(value)));
+                heightMap[r][q] = Math.round(Math.abs(value));
             }
         }
 
-        return colors;
+        return heightMap;
     }
 
     static toGrayscale(value) {

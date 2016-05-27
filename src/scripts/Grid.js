@@ -37,5 +37,21 @@ export default class Grid {
                 this.size++;
             }
         }
-        return graph;    }
+        return graph
+    }
+
+    circles() {
+        let halfWidth = Math.round(this.gridWidth / 2);
+        let halfHeight = Math.round(this.gridHeight / 2);
+        let maxRadius = Math.max(halfWidth, halfHeight);
+        let center = this.graph[halfHeight][halfWidth];
+
+        let circles = [];
+
+        for (let radius = 1; radius < maxRadius; radius++) {
+            circles[radius] = Hex.ring(center, radius);
+        }
+
+        return circles;
+    }
 }

@@ -81,12 +81,12 @@ export default class Hex {
 
     static ring(hex, radius) {
         var results = []
-        var cube = this.add(hex, this.scale(new Hex(-1, 1, 0), radius))
+        var newHex = this.add(hex, this.scale(new Hex(-1, 1, 0), radius))
 
         for (var i = 0; i < 6; i ++) {
             for (var j = 0; j < radius; j ++) {
-                results.push(cube);
-                cube = Hex.neighbour(cube, i);
+                results.push(newHex);
+                newHex = Hex.neighbour(newHex, i);
             }
         }
 

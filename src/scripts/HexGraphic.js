@@ -3,12 +3,14 @@
 import PIXI from 'pixi.js';
 
 export default class Hex extends PIXI.Graphics {
-    constructor(layout, center = new PIXI.Point(0, 0), color = 0x000000, fill = true) {
+    constructor(layout, center = new PIXI.Point(0, 0), height = 0, fill = true) {
         super();
 
         this.layout = layout;
         this.center = center;
-        this.color = color;
+        let hexadecimal = Hex.heightToHexadecimal(height);
+        console.log(hexadecimal);
+        this.color = '0x' + hexadecimal + hexadecimal + hexadecimal;
 
         if (fill) {
             this.beginFill(this.color, 1);
@@ -37,5 +39,11 @@ export default class Hex extends PIXI.Graphics {
         let y = center.y + this.layout.size.height * Math.sin(angleRad);
 
         return new PIXI.Point(x, y);
+    }
+
+    static heightToHexadecimal(height) {
+        let string = height.toString(16).toUpperCase();
+        if (string.length === 1) string = 0 + string;
+        return string;
     }
 }
