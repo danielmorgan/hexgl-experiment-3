@@ -5,11 +5,25 @@
 // Sean McCullough banksean@gmail.com
 
 export default class SimplexNoise {
-    static dot(g, x, y) {
+    static heightMap(graph, intensity = 50) {
+        let heightMap = [];
+
+        for (let r = 0; r < graph.length; r++) {
+            heightMap[r] = [];
+            for (var q = 0; q < graph[r].length; q++) {
+                let value = this._generate(q / intensity, r / intensity) * 256;
+                heightMap[r][q] = Math.round(Math.abs(value));
+            }
+        }
+
+        return heightMap;
+    }
+
+    static _dot(g, x, y) {
         return g[0] * x + g[1] * y;
     }
 
-    static generate(xin, yin) {
+    static _generate(xin, yin) {
         this.grad3 = [[1,1,0],[-1,1,0],[1,-1,0],[-1,-1,0],
         [1,0,1],[-1,0,1],[1,0,-1],[-1,0,-1],
         [0,1,1],[0,-1,1],[0,1,-1],[0,-1,-1]];
@@ -59,26 +73,26 @@ export default class SimplexNoise {
         if(t0<0) n0 = 0.0;
         else {
             t0 *= t0;
-            n0 = t0 * t0 * this.dot(this.grad3[gi0], x0, y0);  // (x,y) of grad3 used for 2D gradient
+            n0 = t0 * t0 * this._dot(this.grad3[gi0], x0, y0);  // (x,y) of grad3 used for 2D gradient
         }
         var t1 = 0.5 - x1*x1-y1*y1;
         if(t1<0) n1 = 0.0;
         else {
             t1 *= t1;
-            n1 = t1 * t1 * this.dot(this.grad3[gi1], x1, y1);
+            n1 = t1 * t1 * this._dot(this.grad3[gi1], x1, y1);
         }
         var t2 = 0.5 - x2*x2-y2*y2;
         if(t2<0) n2 = 0.0;
         else {
             t2 *= t2;
-            n2 = t2 * t2 * this.dot(this.grad3[gi2], x2, y2);
+            n2 = t2 * t2 * this._dot(this.grad3[gi2], x2, y2);
         }
         // Add contributions from each corner to get the final noise value.
         // The result is scaled to return values in the interval [-1,1].
         return 70.0 * (n0 + n1 + n2);
     }
 
-    static generate3d(xin, yin, zin) {
+    static _generate3d(xin, yin, zin) {
         this.grad3 = [[1,1,0],[-1,1,0],[1,-1,0],[-1,-1,0],
             [1,0,1],[-1,0,1],[1,0,-1],[-1,0,-1],
             [0,1,1],[0,-1,1],[0,1,-1],[0,-1,-1]];
@@ -148,51 +162,28 @@ export default class SimplexNoise {
         if(t0<0) n0 = 0.0;
         else {
             t0 *= t0;
-            n0 = t0 * t0 * this.dot(this.grad3[gi0], x0, y0, z0);
+            n0 = t0 * t0 * this._dot(this.grad3[gi0], x0, y0, z0);
         }
         var t1 = 0.6 - x1*x1 - y1*y1 - z1*z1;
         if(t1<0) n1 = 0.0;
         else {
             t1 *= t1;
-            n1 = t1 * t1 * this.dot(this.grad3[gi1], x1, y1, z1);
+            n1 = t1 * t1 * this._dot(this.grad3[gi1], x1, y1, z1);
         }
         var t2 = 0.6 - x2*x2 - y2*y2 - z2*z2;
         if(t2<0) n2 = 0.0;
         else {
             t2 *= t2;
-            n2 = t2 * t2 * this.dot(this.grad3[gi2], x2, y2, z2);
+            n2 = t2 * t2 * this._dot(this.grad3[gi2], x2, y2, z2);
         }
         var t3 = 0.6 - x3*x3 - y3*y3 - z3*z3;
         if(t3<0) n3 = 0.0;
         else {
             t3 *= t3;
-            n3 = t3 * t3 * this.dot(this.grad3[gi3], x3, y3, z3);
+            n3 = t3 * t3 * this._dot(this.grad3[gi3], x3, y3, z3);
         }
         // Add contributions from each corner to get the final noise value.
         // The result is scaled to stay just inside [-1,1]
         return 32.0*(n0 + n1 + n2 + n3);
-    }
-
-    static heightMap(graph, intensity = 50) {
-        let heightMap = [];
-
-        for (let r = 0; r < graph.length; r++) {
-            heightMap[r] = [];
-            for (var q = 0; q < graph[r].length; q++) {
-                let value = this.generate(q / intensity, r / intensity) * 256;
-                heightMap[r][q] = Math.round(Math.abs(value));
-            }
-        }
-
-        return heightMap;
-    }
-
-    static toGrayscale(value) {
-        let hex = () => {
-            var hex = value.toString(16);
-            return hex.length == 1 ? '0' + hex : hex;
-        };
-
-        return '0x' + hex() + hex() + hex();
     }
 }

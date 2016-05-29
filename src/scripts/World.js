@@ -5,7 +5,7 @@ import SimplexNoise from './Generators/SimplexNoise';
 import GradientMask from './Generators/GradientMask';
 import HexGraphic from './HexGraphic';
 import Grid from './Grid';
-import Hex from './Coordinates/Hex';
+import Maths from './Utils/Maths';
 
 export default class World extends PIXI.Container {
     constructor() {
@@ -24,7 +24,7 @@ export default class World extends PIXI.Container {
             for (let q = 0; q < grid.graph[r].length; q++) {
                 let hex = grid.graph[r][q];
                 let point = hex.toPixel(grid.layout);
-                let height = clamp(perlin[r][q] + gradient[r][q], 0, 255);
+                let height = Maths.clamp(perlin[r][q] + gradient[r][q], 0, 255);
                 let graphic = new HexGraphic(grid.layout, point, height);
                 container.addChild(graphic);
             }
@@ -34,8 +34,4 @@ export default class World extends PIXI.Container {
         container.cacheAsBitmap = true;
         return container;
     }
-}
-
-let clamp = function(value, min, max) {
-    return Math.max(min, Math.min(max, value));
 }

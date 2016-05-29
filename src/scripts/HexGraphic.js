@@ -8,9 +8,7 @@ export default class Hex extends PIXI.Graphics {
 
         this.layout = layout;
         this.center = center;
-        let hexadecimal = Hex.heightToHexadecimal(height);
-        console.log(hexadecimal);
-        this.color = '0x' + hexadecimal + hexadecimal + hexadecimal;
+        this.color = this.heightToHexadecimal(height);
 
         if (fill) {
             this.beginFill(this.color, 1);
@@ -41,9 +39,12 @@ export default class Hex extends PIXI.Graphics {
         return new PIXI.Point(x, y);
     }
 
-    static heightToHexadecimal(height) {
-        let string = height.toString(16).toUpperCase();
-        if (string.length === 1) string = 0 + string;
-        return string;
+    heightToHexadecimal(value) {
+        let hex = () => {
+            var hex = value.toString(16);
+            return hex.length == 1 ? '0' + hex : hex;
+        };
+
+        return '0x' + hex() + hex() + hex();
     }
 }
