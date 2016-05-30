@@ -18,7 +18,7 @@ export default class World extends PIXI.Container {
         let container = new PIXI.Container();
 
         let perlin = SimplexNoise.heightMap(grid.graph, 100);
-        let gradient = GradientMask.heightMap(grid.graph, grid.circles(), 1);
+        let gradient = GradientMask.heightMap(grid.graph);
 
         for (let r = 0; r < grid.graph.length; r++) {
             for (let q = 0; q < grid.graph[r].length; q++) {
