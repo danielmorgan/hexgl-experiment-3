@@ -21,8 +21,15 @@ export default class Hex {
         let o = layout.orientation;
         let w = layout.size.width;
         let h = layout.size.height;
-        let q = this.q;
+
+        // Rectangle
         let r = this.r;
+        let rOffset = Math.floor(r / 2);
+        let q = this.q - rOffset;
+
+        // Parallelogram
+        //let r = this.r;
+        //let q = this.q;
 
         let x = (o.f0 * q + o.f1 * r) * w;
         x += layout.origin.x;

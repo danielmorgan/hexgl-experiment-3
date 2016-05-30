@@ -10,7 +10,7 @@ class Game {
         this.renderer = new PIXI.autoDetectRenderer(
             window.innerWidth,
             window.innerHeight,
-            { backgroundColor: 0xd6cca9 }
+            { backgroundColor: 0xffffff }
         );
         this.stage = new PIXI.Container();
         this.$container = $('#game');

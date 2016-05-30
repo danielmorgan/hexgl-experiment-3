@@ -11,7 +11,7 @@ export default class Grid {
         this.size = 0;
         this.layout = new Layout(
             ORIENTATION_POINTY,
-            { width: window.innerWidth * 0.89, height: window.innerHeight * 0.9 },
+            { width: window.innerWidth, height: window.innerHeight * 0.9 },
             { width: 5, height: 5 },
             new PIXI.Point(0, 0),
             true
