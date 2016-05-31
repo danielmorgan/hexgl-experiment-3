@@ -8,10 +8,13 @@ export default class Hex extends PIXI.Graphics {
 
         this.layout = layout;
         this.center = center;
-        this.color = this.heightToHexadecimal(height);
+        this.color = this.heightToTerrainColor(height);
 
         if (fill) {
             this.beginFill(this.color, 1);
+            if (height <= 230) {
+                this.lineStyle(1, 0x000000, 0.1);
+            }
         } else {
             this.lineStyle(1, 0x000000, 0.1);
         }
@@ -37,6 +40,20 @@ export default class Hex extends PIXI.Graphics {
         let y = center.y + this.layout.size.height * Math.sin(angleRad);
 
         return new PIXI.Point(x, y);
+    }
+
+    heightToTerrainColor(value) {
+        if (value > 230) {
+            return '0x0077ff'; // water
+        } else if (value <= 230 && value > 180) {
+            return '0xccaa44'; // coast
+        } else if (value <= 180 && value > 100) {
+            return '0x22cc11'; // grass
+        } else if (value <= 100 && value > 40) {
+            return '0x664422'; // mountains
+        } else if (value <= 40) {
+            return '0xeeeef7'; // snow caps
+        }
     }
 
     heightToHexadecimal(value) {
