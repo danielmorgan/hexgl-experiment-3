@@ -11,7 +11,7 @@ export default class World extends PIXI.Container {
     constructor() {
         super();
 
-        this.addChild(this.draw(new Grid(), 1.00));
+        this.addChild(this.draw(new Grid(), 1));
     }
 
     draw(grid, alpha = 1) {

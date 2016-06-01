@@ -11,9 +11,8 @@ export default class Hex extends PIXI.Graphics {
         this.color = this.heightToTerrainColor(height);
 
         if (fill) {
-            this.beginFill(this.color, 1);
             if (height <= 230) {
-                this.lineStyle(1, 0x000000, 0.1);
+                this.beginFill(this.color, 0.5);
             }
         } else {
             this.lineStyle(1, 0x000000, 0.1);
@@ -44,15 +43,15 @@ export default class Hex extends PIXI.Graphics {
 
     heightToTerrainColor(value) {
         if (value > 230) {
-            return '0x0077ff'; // water
+            return '0xa6acbe'; // water
         } else if (value <= 230 && value > 180) {
-            return '0xccaa44'; // coast
+            return '0xd4be7d'; // coast
         } else if (value <= 180 && value > 100) {
-            return '0x22cc11'; // grass
+            return '0x889d57'; // grass
         } else if (value <= 100 && value > 40) {
-            return '0x664422'; // mountains
+            return '0x665441'; // mountains
         } else if (value <= 40) {
-            return '0xeeeef7'; // snow caps
+            return '0xeaece9'; // snow caps
         }
     }
 
